@@ -1,0 +1,4 @@
+{
+    "panorama_host": "https://PANORAMA_IP_ADDRESS",
+    "api_key": "PANORAMA_API_KEY"
+}

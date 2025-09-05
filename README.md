@@ -27,7 +27,7 @@ Some scripts may require arguments or configuration (such as Panorama API creden
 
 inside each script for usage details.
 
-How it works:
+▶️ How it works
 -------------
 1. Export rules from a Device Group or shared policy into CSV files:
    - panorama_rules_<scope>.csv (original backup)

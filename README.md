@@ -13,9 +13,9 @@ PanoramaTools is a collection of scripts designed to help automate tasks in **Pa
    git clone https://github.com/dgonzali/PanoramaTools.git
    cd PanoramaTools
 
-bash
-Copy code
-pip install -r requirements.txt
+   ```bash
+   pip install -r requirements.txt
+
 ▶️ Usage
 Run the script from the project folder:
 
@@ -23,7 +23,9 @@ Run the script from the project folder:
    python script_name.py
    Replace script_name.py with the specific script you want to run.
 
-Some scripts may require arguments or configuration (such as Panorama API credentials, device groups, or template names). Refer to the comments inside each script for usage details.
+Some scripts may require arguments or configuration (such as Panorama API credentials, device groups, or template names). Refer to the comments 
+
+inside each script for usage details.
 
 How it works:
 -------------

@@ -61,12 +61,20 @@ Use it at your own risk. No official support is provided.
 
 ### Modify Rules
 - Open the generated CSV file (panorama_rules_<scope>_modified.csv)
-- Update ONLY the **Security Profile Group** column as needed (NOTE: Security profile Group must to be present in the device)
+- Update **ONLY** the **Security Profile Group** column as needed (NOTE: Security profile Group must to be present in the device)
 - All other fields must remain unchanged (if other field is modified, the script stops and no changes are sent to the device)
 
 ### Apply Changes
 - Save the modified CSV file (panorama_rules_<scope>_modified.csv).
 - Run the script again and select **Edit rules** by choosing option 2.
+
+  ```bash
+   Select action:
+       1) Export rules to CSV
+       2) Edit rules from CSV
+   Option (1 or 2): 2
+  ```
+
 - Review the detected changes on screen.
 - Confirm the update by typing `APPLY`.
 - The script will send the changes to Panorama and display a summary.

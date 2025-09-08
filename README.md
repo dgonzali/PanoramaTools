@@ -44,21 +44,33 @@ Use it at your own risk. No official support is provided.
   ```bash
   python panorama_rules.py
   ```
+- Firstly, you need to choose between "device group name" or "shared" depending on the scope you want to work on.
 
-- Select **Export rules** and choose the desired Device Group.
-- The rules will be exported to CSV files in the project directory (e.g. `panorama_rules_<DG>.csv`).
+
+  ```bash
+   Select action:
+       1) Export rules to CSV
+       2) Edit rules from CSV
+   Option (1 or 2): 1
+  ```
+- Once you have selected the scope, Select **Export rules** by choosing option 1
+
+- The rules will be exported to CSV files in the project directory (e.g. `panorama_rules_<scope>.csv`).
+   - panorama_rules_<scope>.csv (original backup)
+   - panorama_rules_<scope>_modified.csv (editable for profile_group changes)
 
 ### Modify Rules
-- Open the generated CSV file.
-- Update only the **Security Profile Group** column as needed.
-- All other fields must remain unchanged.
+- Open the generated CSV file (panorama_rules_<scope>_modified.csv)
+- Update ONLY the **Security Profile Group** column as needed (NOTE: Security profile Group must to be present in the device)
+- All other fields must remain unchanged (if other field is modified, the script stops and no changes are sent to the device)
 
 ### Apply Changes
-- Save the modified CSV file (same filename with `_modified`).
-- Run the script again and select **Edit rules**.
+- Save the modified CSV file (panorama_rules_<scope>_modified.csv).
+- Run the script again and select **Edit rules** by choosing option 2.
 - Review the detected changes on screen.
 - Confirm the update by typing `APPLY`.
-- The script will push the changes to Panorama and display a summary.
+- The script will send the changes to Panorama and display a summary.
+- Verify in Panorama and commit the changes.
 
 ### Error Handling
 - If Panorama rejects a rule update (e.g., non-existent profile group), the script logs the error to a file:
@@ -70,5 +82,3 @@ Use it at your own risk. No official support is provided.
 - Each log entry includes the rule name, timestamp, and the error message returned by Panorama.
 
 ---
-
-*Tip: Add screenshots here to illustrate the steps if using Visual Studio Code.*

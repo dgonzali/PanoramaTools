@@ -7,21 +7,21 @@ import datetime
 
 """
 Bulk Security Rule Management for Palo Alto Networks Panorama
-(Only profile_group edits; preserves all other fields)
+(Supports profile_group and log_setting edits; preserves all other fields)
 
 Description:
 ------------
 This script automates the bulk editing of security rules on a Palo Alto Networks Panorama system
-via its XML API. It is restricted to updating **only the Security Profile Group (profile_group)**. 
-All other fields in the rule are preserved.
+via its XML API. It is restricted to updating **only the Security Profile Group (profile_group) 
+and the Log Forwarding Profile (log_setting)**. All other fields in the rule are preserved.
 
 How it works:
 -------------
 1. Export rules from a Device Group or shared policy into CSV files:
    - panorama_rules_<scope>.csv (original backup)
-   - panorama_rules_<scope>_modified.csv (editable for profile_group changes)
+   - panorama_rules_<scope>_modified.csv (editable for profile_group/log_setting changes)
 2. Detect differences between the original CSV and the modified CSV.
-3. Only allow modifications to the profile_group field. Any other change aborts the script.
+3. Only allow modifications to the profile_group and log_setting fields. Any other change aborts the script.
 4. Update rules in Panorama, preserving all other fields.
 5. For rules that fail to update, generate an error log file named:
    error_<YYYYMMDD_HHMMSS>.log, containing exact API error messages.
@@ -170,6 +170,7 @@ def update_rule(panorama_host, api_key, policy_scope, rulebase_type, rule):
         print(f"[ERROR] {msg}")
         return False, msg
 
+    # --- profile-group update ---
     ps = entry_elem.find('profile-setting')
     if ps is None:
         ps = ET.Element('profile-setting')
@@ -186,6 +187,16 @@ def update_rule(panorama_host, api_key, policy_scope, rulebase_type, rule):
             m = ET.SubElement(group, 'member')
             m.text = member
 
+    # --- log-setting update ---
+    existing_log = entry_elem.find('log-setting')
+    if existing_log is not None:
+        entry_elem.remove(existing_log)
+
+    log_text = rule.get('log_setting', '').strip()
+    if log_text:
+        log_elem = ET.SubElement(entry_elem, 'log-setting')
+        log_elem.text = log_text
+
     entry_str = ET.tostring(entry_elem, encoding='unicode')
     params = {'type': 'config', 'action': 'edit', 'key': api_key, 'xpath': xpath_entry, 'element': entry_str}
     response = requests.post(url, params=params, verify=False)
@@ -195,7 +206,7 @@ def update_rule(panorama_host, api_key, policy_scope, rulebase_type, rule):
             xml_resp = ET.fromstring(response.text)
             status = xml_resp.attrib.get('status', '')
             if status == 'success':
-                print(f"✅ Rule '{name}' updated successfully (profile_group updated).")
+                print(f"✅ Rule '{name}' updated successfully (profile_group/log_setting updated).")
                 return True, ""
             else:
                 print(f"[ERROR] Panorama returned error updating '{name}':")
@@ -259,13 +270,14 @@ def diff_rules(orig, mod):
     return diffs
 
 def validate_allowed_changes(diffs):
+    allowed_fields = ['profile_group', 'log_setting']
     for key, diff_data in diffs.items():
         action = diff_data[0]
         if action == 'Modified':
             changed_fields = diff_data[3]
             for field in changed_fields.keys():
-                if field != 'profile_group':
-                    print(f"\n[ERROR] Only 'profile_group' can be modified.")
+                if field not in allowed_fields:
+                    print(f"\n[ERROR] Only {allowed_fields} can be modified.")
                     print(f"Detected change in rule '{key[0]}' (field: '{field}')")
                     sys.exit(1)
         elif action in ['Added', 'Deleted']:
@@ -307,7 +319,7 @@ def export_rules(policy_scope):
 
     modified_filename = f"panorama_rules_{policy_scope}_modified.csv"
     write_csv(all_rules, modified_filename)
-    print(f" 📝 Also created '{modified_filename}' for editing profile_group only.")
+    print(f" 📝 Also created '{modified_filename}' for editing profile_group and log_setting only.")
 
 def edit_rules(policy_scope):
     print(f"Preparing rule update for {policy_scope} ...")

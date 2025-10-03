@@ -20,11 +20,7 @@ Use it at your own risk. No official support is provided.
 ### Preparation
 - Install Python 3.9+ on your workstation.
 - Clone or download the repository containing the script.
-- Install required dependencies from the provided requirements.txt:
-
-  ```bash
-  pip install -r requirements.txt
-  ```
+- Install required dependencies
 
 ### Configure Panorama Access
 - Edit the `config.json` file in the project folder.
@@ -42,7 +38,7 @@ Use it at your own risk. No official support is provided.
 - Run the script:
 
   ```bash
-  python panorama_rules.py
+  python Panorama_Bulk_SecProfile_config.py
   ```
 - Choose the scope: either the Device Group name or "shared".
 
